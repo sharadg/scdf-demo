@@ -3,13 +3,13 @@
 ## Spin up backing services
 ---
 - Running RabbitMQ locally using Docker
-  ```docker run -d -p 5672:5672 -p 15672:15672 --name rabbitmq --hostname local-rabbit rabbitmq:3.7.4-management```
+```docker run -d -p 5672:5672 -p 15672:15672 --name rabbitmq --hostname local-rabbit rabbitmq:3.7.4-management```
   
 - Running MySQL locally using Docker
-  ```docker run -d --name mysql -e MYSQL_ROOT_PASSWORD=admin -e MYSQL_DATABASE=scdf -p 3306:3306 -d mysql:latest```
+```docker run -d --name mysql -e MYSQL_ROOT_PASSWORD=admin -e MYSQL_DATABASE=scdf -p 3306:3306 -d mysql:latest```
   
 - Running Redis locally using Docker
-  ```docker run -d --name redis -p 6379:6379 redis```
+```docker run -d --name redis -p 6379:6379 redis```
 
 ```
 docker ps
@@ -19,25 +19,21 @@ f0e9e090466b        redis                       "docker-entrypoint.s…"   2 sec
 5fea4b632d32        rabbitmq:3.7.4-management   "docker-entrypoint.s…"   4 minutes ago        Up 4 minutes        4369/tcp, 5671/tcp, 0.0.0.0:5672->5672/tcp, 15671/tcp, 25672/tcp, 0.0.0.0:15672->15672/tcp   rabbitmq
 ```
 
-###########################
-Start SCDF server and shell
-###########################
+## Start SCDF server and shell
 ---
 - Run SCDF server locally with mysql and rabbitmq info
-  java -jar spring-cloud-dataflow-server-local-1.4.0.RELEASE.jar --spring.datasource.url=jdbc:mysql://localhost:3306/scdf --spring.datasource.username=root --spring.datasource.password=admin --spring.datasource.driver-class-name=org.mariadb.jdbc.Driver --spring.rabbitmq.host=127.0.0.1 --spring.rabbitmq.username=guest --spring.rabbitmq.password=guest --spring.rabbitmq.port=5672
+```java -jar spring-cloud-dataflow-server-local-1.4.0.RELEASE.jar --spring.datasource.url=jdbc:mysql://localhost:3306/scdf --spring.datasource.username=root --spring.datasource.password=admin --spring.datasource.driver-class-name=org.mariadb.jdbc.Driver --spring.rabbitmq.host=127.0.0.1 --spring.rabbitmq.username=guest --spring.rabbitmq.password=guest --spring.rabbitmq.port=5672```
   
 - Run the SCDF Shell
-  java -jar spring-cloud-dataflow-shell-1.4.0.RELEASE.jar
+```java -jar spring-cloud-dataflow-shell-1.4.0.RELEASE.jar```
   
 - Import the SCSt App Starters
-  app import --uri http://bit.ly/Celsius-SR1-stream-applications-rabbit-maven
+```app import --uri http://bit.ly/Celsius-SR1-stream-applications-rabbit-maven```
 - Confirm its working: 
-  app list
-  app info sink:file
+```app list```
+```app info sink:file```
 
-###########################
-Simple Streams
-###########################
+## Simple Streams
 ---
 ### Simple HTTP and Log stream
 - Create a SCDF Stream definition, deploy it.
