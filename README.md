@@ -1,14 +1,12 @@
 # spring-cloud-dataflow-demo
 
-###########################
-Spin up backing services
-###########################
+## Spin up backing services
 ---
 - Running RabbitMQ locally using Docker
-  docker run -d -p 5672:5672 -p 15672:15672 --name rabbitmq --hostname local-rabbit rabbitmq:3.7.4-management
+  `docker run -d -p 5672:5672 -p 15672:15672 --name rabbitmq --hostname local-rabbit rabbitmq:3.7.4-management`
   
 - Running MySQL locally using Docker
-  docker run -d --name mysql -e MYSQL_ROOT_PASSWORD=admin -e MYSQL_DATABASE=scdf -p 3306:3306 -d mysql:latest
+  `docker run -d --name mysql -e MYSQL_ROOT_PASSWORD=admin -e MYSQL_DATABASE=scdf -p 3306:3306 -d mysql:latest`
   
 - Running Redis locally using Docker
   docker run -d --name redis -p 6379:6379 redis
