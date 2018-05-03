@@ -32,7 +32,7 @@ f0e9e090466b        redis                       "docker-entrypoint.s…"   2 sec
 
 ```java -jar spring-cloud-dataflow-shell-1.4.0.RELEASE.jar```
   
-- Import the SCSt App Starters
+- Import the Spring Cloud Stream App Starters
 
 ```app import --uri http://bit.ly/Celsius-SR1-stream-applications-rabbit-maven```
 - Confirm its working: 
@@ -89,16 +89,16 @@ task execution list
 ```
 
 ### Batch File Ingestion
-- Import fileIngest App Starters
+- Import fileIngest App Starters. [fileIngest github repo](https://github.com/markpollack/spring-cloud-dataflow-samples/)
 
-```app register --type task --name fileIngest --uri file:///Users/sgupta/development/pivotal/scdf/spring-cloud-dataflow-samples/batch/file-ingest/target/ingest-1.0.0.jar```
+```app register --type task --name fileIngest --uri file:/<path to git clone>/spring-cloud-dataflow-samples/batch/file-ingest/target/ingest-1.0.0.jar```
   
 - Create Task definition, launch it
 
 ```
 task create fileIngestTask --definition fileIngest
 task list
-task launch fileIngestTask --arguments "filePath=file:///Users/sgupta/development/pivotal/scdf/spring-cloud-dataflow-samples/batch/file-ingest/src/main/resources/data.csv"
+task launch fileIngestTask --arguments "filePath=file:/<path to git clone>/spring-cloud-dataflow-samples/batch/file-ingest/src/main/resources/data.csv"
 task execution list
 ```
 
@@ -117,25 +117,25 @@ tweets = twitterstream --access-token-secret=<ATK> --access-token=<AT> --consume
 ## Object Detection (AI/DL)
 ---
 ### Register image-viewer sink and object-detection processor application
-- Image Viewer
+- Image Viewer. [image-viewer github repo](https://github.com/tzolov/image-processing)
 
-```app register --name image-viewer --type sink --uri file:///Users/sgupta/development/pivotal/scdf/image-processing/image-viewer/target/image-viewer-0.0.1-SNAPSHOT.jar```
+```app register --name image-viewer --type sink --uri file:/<path to git clone>/image-processing/image-viewer/target/image-viewer-0.0.1-SNAPSHOT.jar```
 
-- Object Detection (TensorFlow)
+- Object Detection (TensorFlow). [object-detection github repo](https://github.com/spring-cloud-stream-app-starters/tensorflow)
 
-```app register --name object-detector --type sink --uri file:///Users/sgupta/development/pivotal/scdf/tensorflow/apps/object-detection-processor-rabbit/target/object-detection-processor-rabbit-2.0.0.BUILD-SNAPSHOT.jar```
+```app register --name object-detector --type sink --uri file:/<path to git clone>/tensorflow/apps/object-detection-processor-rabbit/target/object-detection-processor-rabbit-2.0.0.BUILD-SNAPSHOT.jar```
 
 - Create Stream & deploy
 
 ```
-stream create --name object-detection --definition "file --directory='/Users/sgupta/development/pivotal/scdf/object-detection/input' | object-detector --mode=header | image-viewer"
+stream create --name object-detection --definition "file --directory='/<path to local input folder to read images from>/object-detection/input' | object-detector --mode=header | image-viewer"
 stream deploy --name object-detection
 ```
   
 ## FTP Stream
 ---
 ### Start Docker based FTP server
-- FTP Container (optionally: bash into container to read the logs)
+- FTP Container (optionally: bash into container to read the logs). [pure-ftpd github repo](https://github.com/stilliard/docker-pure-ftpd)
 
 ```docker run -d --name ftpd_server -p 21:21 -p 30000-30009:30000-30009 -e "PUBLICHOST=localhost" -e "ADDED_FLAGS=-d -d -O w3c:/var/log/pure-ftpd/transfer.log" stilliard/pure-ftpd:latest```
 
@@ -155,7 +155,7 @@ stream deploy --name object-detection
 - Create FTP stream
 
 ```
-simple_ftp = ftp --local-dir=/Users/sgupta/development/pivotal/scdf/tmp --remote-dir=/ --username=bob --password=bob --host=localhost --filename-pattern=cf* --fixed-delay=5 --time-unit=MINUTES > :file_collector
+simple_ftp = ftp --local-dir=/<path to local path to download files to>/tmp --remote-dir=/ --username=bob --password=bob --host=localhost --filename-pattern=cf* --fixed-delay=5 --time-unit=MINUTES > :file_collector
 log_ftp = :file_collector | log
 ```
 
@@ -163,11 +163,9 @@ log_ftp = :file_collector | log
 ---
 - Create MySQL database and tables
 
-```mysqlsh root@localhost -P 3306 --password=admin --database=test --sql```
-
-- Create database test;
-
 ```
+mysqlsh root@localhost -P 3306 --password=admin --database=test --sql
+create database test;
 CREATE TABLE `names` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) DEFAULT NULL,
@@ -176,6 +174,7 @@ CREATE TABLE `names` (
   PRIMARY KEY (`id`)
 )
 ```
+
 - Create HTTP & JDBC
 
 ```
@@ -187,5 +186,5 @@ http -v POST :8787 < ../ftp_jdbc_demo/cf-cities.json
 - Alternatively, make the same file available on FTP server
 - Create Stream & Test
 
-```ftp_jdbc = ftp --local-dir='/Users/sgupta/development/pivotal/scdf/tmp' --remote-dir='/' --username=bob --password=bob --host=localhost --filename-pattern=cf* --fixed-delay=2 --time-unit=MINUTES --mode=lines --with-markers=false --delete-remote-files=true | jdbc_2 --table-name=names --columns=name,city,street --password=admin --username=root --driver-class-name=org.mariadb.jdbc.Driver --url='jdbc:mysql://localhost:3306/test'```
+```ftp_jdbc = ftp --local-dir='/<path to local path to download files to>/tmp' --remote-dir='/' --username=bob --password=bob --host=localhost --filename-pattern=cf* --fixed-delay=2 --time-unit=MINUTES --mode=lines --with-markers=false --delete-remote-files=true | jdbc --table-name=names --columns=name,city,street --password=admin --username=root --driver-class-name=org.mariadb.jdbc.Driver --url='jdbc:mysql://localhost:3306/test'```
   
