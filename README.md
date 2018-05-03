@@ -180,7 +180,13 @@ CREATE TABLE `names` (
 ```
 http_jdbc = http --server.port=8787 | jdbc --table-name=names --columns=name,city,street --password=admin --username=root --driver-class-name=org.mariadb.jdbc.Driver --url='jdbc:mysql://localhost:3306/test'
 http -v POST :8787 name=bruce_lee city=shanghai street=lee_blvd
-http -v POST :8787 < ../ftp_jdbc_demo/cf-cities.json
+```
+```
+cat ../ftp_jdbc_demo/cf-names.json
+{"city": "Malibu", "name": "Tony Stark", "street": "La Jolla"}
+```
+```
+http -v POST :8787 < ../ftp_jdbc_demo/cf-names.json
 ```
 
 - Alternatively, make the same file available on FTP server
